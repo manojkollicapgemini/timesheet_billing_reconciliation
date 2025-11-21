@@ -1,0 +1,40 @@
+body {
+  background: #020617;
+  color: #e5e7eb;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.card {
+  border-radius: 1rem;
+  background-color: #0f172a;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.table thead {
+  background: #020617;
+}
+
+.btn-pill {
+  border-radius: 999px;
+}
+
+.table td.status-completed {
+  color: #22c55e;
+  font-weight: 600;
+}
+.table td.status-partial {
+  color: #eab308;
+  font-weight: 600;
+}
+.table td.status-mismatch {
+  color: #fb923c;
+  font-weight: 600;
+}
+.table td.status-notcompleted {
+  color: #f97316;
+  font-weight: 600;
+}
