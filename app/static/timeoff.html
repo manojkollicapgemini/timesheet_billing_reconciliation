@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Time Off & Holidays — CG × Citi</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="/static/styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav
+      class="navbar navbar-expand-lg navbar-dark bg-body-tertiary border-bottom border-slate-700"
+    >
+      <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+          <div class="app-logo me-2">
+            <span>CG</span>
+          </div>
+          <span>CG</span>
+        </a>
+        <div class="d-flex gap-2 ms-auto">
+          <a class="btn btn-sm btn-outline-info btn-pill" href="/">Timesheets</a>
+          <a class="btn btn-sm btn-outline-info btn-pill" href="/billing"
+            >Billing</a
+          >
+          <a class="btn btn-sm btn-outline-info btn-pill" href="/employees"
+            >Employees</a
+          >
+          <a class="btn btn-sm btn-outline-info btn-pill active" href="/timeoff"
+            >Time Off</a
+          >
+          <a class="btn btn-sm btn-outline-success btn-pill" href="/chatbot"
+            >Chatbot</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <main class="container py-4">
+      <div class="row g-3 mb-3 align-items-end">
+        <div class="col-md-6">
+          <h3 class="mb-1">Time Off & Leave Balance</h3>
+          <p class="text-secondary small mb-0">
+            Track annual leave allowance, approved time off and remaining days
+            per resource.
+          </p>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Year</label>
+          <select id="yearSelect" class="form-select form-select-sm"></select>
+        </div>
+        <div class="col-md-3 text-md-end">
+          <label class="form-label small d-block">Filter status</label>
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary btn-pill" id="filterAll">
+              All
+            </button>
+            <button class="btn btn-outline-secondary btn-pill" id="filterPending">
+              Pending
+            </button>
+            <button class="btn btn-outline-secondary btn-pill" id="filterApproved">
+              Approved
+            </button>
+            <button class="btn btn-outline-secondary btn-pill" id="filterRejected">
+              Rejected
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-4">
+          <div class="card highlight-card">
+            <div class="card-body">
+              <div class="text-secondary small">Approved leave this year</div>
+              <div class="display-6 fw-bold" id="totalApprovedDays">0</div>
+              <div class="small text-secondary">days across all employees</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card highlight-card">
+            <div class="card-body">
+              <div class="text-secondary small">Pending requests</div>
+              <div class="display-6 fw-bold" id="totalPending">0</div>
+              <div class="small text-secondary">requests awaiting approval</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card glass-card">
+            <div class="card-body">
+              <h6 class="mb-2">Top leave consumers</h6>
+              <ul class="list-unstyled mb-0 small" id="topConsumers"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-lg-5">
+          <div class="card glass-card">
+            <div class="card-body">
+              <h6 class="mb-2">Create time off request</h6>
+              <div class="row g-2">
+                <div class="col-12">
+                  <input
+                    id="toCitiEmail"
+                    class="form-control form-control-sm"
+                    placeholder="Citi email (primary key for resource)"
+                  />
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Start date</label>
+                  <input
+                    id="toStart"
+                    type="date"
+                    class="form-control form-control-sm"
+                  />
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">End date</label>
+                  <input
+                    id="toEnd"
+                    type="date"
+                    class="form-control form-control-sm"
+                  />
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Leave type</label>
+                  <select id="toType" class="form-select form-select-sm">
+                    <option value="Planned">Planned</option>
+                    <option value="Sick">Sick</option>
+                    <option value="Unpaid">Unpaid</option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Reason</label>
+                  <input
+                    id="toReason"
+                    class="form-control form-control-sm"
+                    placeholder="Optional note"
+                  />
+                </div>
+                <div class="col-12 d-grid mt-2">
+                  <button
+                    class="btn btn-sm btn-primary btn-pill"
+                    id="toCreateBtn"
+                  >
+                    Submit request
+                  </button>
+                </div>
+              </div>
+              <div class="small text-secondary mt-2" id="toMsg"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span>Leave balances</span>
+              <small class="text-secondary"
+                >Annual allowance vs used days per employee</small
+              >
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Allowance</th>
+                      <th>Used</th>
+                      <th>Remaining</th>
+                    </tr>
+                  </thead>
+                  <tbody id="leaveSummaryBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Time off requests</span>
+          <small class="text-secondary">Approve / reject as needed</small>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Email</th>
+                  <th>Type</th>
+                  <th>Dates</th>
+                  <th>Days</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="timeoffBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    ></script>
+    <script src="/static/timeoff.js"></script>
+  </body>
+</html>

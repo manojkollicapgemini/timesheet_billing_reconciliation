@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Employees — CG</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="/static/styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav
+      class="navbar navbar-expand-lg navbar-dark bg-body-tertiary border-bottom border-slate-700"
+    >
+      <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+          <div class="app-logo me-2">
+            <span>CG</span>
+          </div>
+          <span>CG</span>
+        </a>
+        <div class="d-flex gap-2 ms-auto">
+          <a class="btn btn-sm btn-outline-info btn-pill" href="/">Timesheets</a>
+          <a class="btn btn-sm btn-outline-info btn-pill" href="/billing"
+            >Billing</a
+          >
+          <a class="btn btn-sm btn-outline-info btn-pill" href="/employees"
+            >Employees</a
+          >
+          <a class="btn btn-sm btn-outline-info btn-pill active" href="/timeoff"
+            >Time Off</a
+          >
+          <a class="btn btn-sm btn-outline-success btn-pill" href="/chatbot"
+            >Chatbot</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <main class="container py-4">
+      <div class="row g-3 align-items-end mb-3">
+        <div class="col-md-4">
+          <h3 class="mb-0">Employee Directory</h3>
+          <p class="text-secondary small mb-0">
+            Manage onboarding / deboarding and keep master data aligned with timesheets.
+          </p>
+        </div>
+        <div class="col-md-8 text-md-end">
+          <button
+            class="btn btn-outline-secondary btn-pill me-2"
+            id="filterActive"
+          >
+            Active
+          </button>
+          <button class="btn btn-outline-secondary btn-pill" id="filterInactive">
+            Inactive
+          </button>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-3">
+          <div class="card highlight-card">
+            <div class="card-body">
+              <div class="text-secondary small">Active employees</div>
+              <div class="display-6 fw-bold" id="activeCount">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card highlight-card">
+            <div class="card-body">
+              <div class="text-secondary small">Inactive / deboarded</div>
+              <div class="display-6 fw-bold" id="inactiveCount">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card glass-card">
+            <div class="card-body">
+              <h6 class="mb-2">Onboard employee</h6>
+              <div class="row g-2">
+                <div class="col-md-4">
+                  <input
+                    class="form-control form-control-sm"
+                    placeholder="Employee ID"
+                    id="empEmployeeId"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <input
+                    class="form-control form-control-sm"
+                    placeholder="Name"
+                    id="empName"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <input
+                    class="form-control form-control-sm"
+                    placeholder="Manager"
+                    id="empManager"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <input
+                    class="form-control form-control-sm"
+                    placeholder="CG email"
+                    id="empCgEmail"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <input
+                    class="form-control form-control-sm"
+                    placeholder="Citi email"
+                    id="empCitiEmail"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <input
+                    class="form-control form-control-sm"
+                    placeholder="Role"
+                    id="empRole"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <input
+                    class="form-control form-control-sm"
+                    placeholder="Region code (e.g. NA, EU)"
+                    id="empRegionCode"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <input
+                    class="form-control form-control-sm"
+                    placeholder="Region name"
+                    id="empRegionName"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <input
+                    class="form-control form-control-sm"
+                    placeholder="Default project code"
+                    id="empProjectCode"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <input
+                    class="form-control form-control-sm"
+                    placeholder="Billing rate"
+                    id="empRate"
+                    type="number"
+                    step="0.01"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <input
+                    class="form-control form-control-sm"
+                    type="date"
+                    id="empStartDate"
+                  />
+                </div>
+                <div class="col-md-4 d-grid">
+                  <button class="btn btn-sm btn-primary btn-pill" id="createEmpBtn">
+                    Onboard
+                  </button>
+                </div>
+              </div>
+              <div class="small text-secondary mt-2" id="empMsg"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Employee list</span>
+          <small class="text-secondary">Single source of truth for CG × Citi resources</small>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="empTable">
+              <thead>
+                <tr>
+                  <th>Emp ID</th>
+                  <th>Name</th>
+                  <th>CG email</th>
+                  <th>Citi email</th>
+                  <th>Region</th>
+                  <th>Project</th>
+                  <th>Rate</th>
+                  <th>Status</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    ></script>
+    <script src="/static/employees.js"></script>
+  </body>
+</html>

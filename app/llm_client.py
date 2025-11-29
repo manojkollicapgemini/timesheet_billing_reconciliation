@@ -6,7 +6,7 @@ load_dotenv()
 
 API_BASE = "https://api.generative.engine.capgemini.com/v2/llm/invoke"
 API_KEY = os.getenv("CAPG_LLM_API_KEY", "CHANGE_ME")
-DEFAULT_MODEL = "mistral.mistral-7b-instruct-v0:2"
+DEFAULT_MODEL = "anthropic.claude-3-5-sonnet-20241022-v2:0"
 
 SYSTEM_PROMPT = (
     "You are a senior portfolio manager assistant for Capgemini working on Citi accounts. "

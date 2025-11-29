@@ -15,20 +15,30 @@
       class="navbar navbar-expand-lg navbar-dark bg-body-tertiary border-bottom border-slate-700"
     >
       <div class="container-fluid">
-        <a class="navbar-brand" href="/">CG × Citi Timesheets</a>
+        <a class="navbar-brand d-flex align-items-center" href="/">
+          <div class="app-logo me-2">
+            <span>CG</span>
+          </div>
+          <span>CG</span>
+        </a>
         <div class="d-flex gap-2 ms-auto">
+          <a class="btn btn-sm btn-outline-info btn-pill" href="/">Timesheets</a>
           <a class="btn btn-sm btn-outline-info btn-pill" href="/billing"
             >Billing</a
+          >
+          <a class="btn btn-sm btn-outline-info btn-pill" href="/employees"
+            >Employees</a
+          >
+          <a class="btn btn-sm btn-outline-info btn-pill active" href="/timeoff"
+            >Time Off</a
           >
           <a class="btn btn-sm btn-outline-success btn-pill" href="/chatbot"
             >Chatbot</a
           >
-          <a class="btn btn-sm btn-outline-secondary btn-pill" href="/admin"
-            >Admin</a
-          >
         </div>
       </div>
     </nav>
+
     <main class="container py-4">
       <div class="row g-3 align-items-end">
         <div class="col-md-3">

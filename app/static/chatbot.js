@@ -3,29 +3,46 @@ const cQueryInput = document.getElementById("cQuery");
 const askBtn = document.getElementById("askBtn");
 const chatLog = document.getElementById("chatLog");
 const chatStatus = document.getElementById("chatStatus");
+const debugSql = document.getElementById("debugSql");
 const presetButtons = document.querySelectorAll(".preset-btn");
+const typingIndicator = document.getElementById("typingIndicator");
 
-function appendMessage(role, text, meta = null) {
-  const wrap = document.createElement("div");
-  wrap.className = "mb-3";
+function createBubble(role, text) {
+  const row = document.createElement("div");
+  row.className =
+    "chat-row " +
+    (role === "user" ? "chat-row-user justify-content-end" : "chat-row-bot");
 
-  const badge =
-    role === "user"
-      ? '<span class="badge bg-info me-2">You</span>'
-      : '<span class="badge bg-success me-2">Assistant</span>';
+  const avatar = document.createElement("div");
+  avatar.className =
+    "chat-avatar " + (role === "user" ? "avatar-user" : "avatar-bot");
+  avatar.textContent = role === "user" ? "You" : "AI";
 
-  let metaHtml = "";
-  if (meta && meta.reminders_triggered) {
-    metaHtml = `<div class="small text-warning mt-1">
-      System: reminders triggered for <strong>${meta.reminders_triggered}</strong> resources in the latest month.
-    </div>`;
+  const bubble = document.createElement("div");
+  bubble.className =
+    "chat-bubble " +
+    (role === "user" ? "chat-bubble-user" : "chat-bubble-bot") +
+    " bubble-animate";
+  bubble.innerHTML = (text || "").toString().replace(/\n/g, "<br>");
+
+  if (role === "user") {
+    row.appendChild(bubble);
+    row.appendChild(avatar);
+  } else {
+    row.appendChild(avatar);
+    row.appendChild(bubble);
   }
 
-  wrap.innerHTML = `${badge}<span>${(text || "")
-    .toString()
-    .replace(/\n/g, "<br>")}</span>${metaHtml}`;
-  chatLog.appendChild(wrap);
+  chatLog.appendChild(row);
   chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+function setTyping(active) {
+  if (active) {
+    typingIndicator.classList.remove("d-none");
+  } else {
+    typingIndicator.classList.add("d-none");
+  }
 }
 
 async function ask() {
@@ -33,9 +50,12 @@ async function ask() {
   if (!query) return;
   const project = cProjectInput.value.trim() || null;
 
-  appendMessage("user", query);
+  createBubble("user", query);
   cQueryInput.value = "";
-  chatStatus.textContent = "Thinking on top of live billing & timesheets...";
+  chatStatus.textContent = "Querying live data and preparing an answer...";
+  debugSql.textContent = "";
+  setTyping(true);
+  askBtn.disabled = true;
 
   const payload = { query };
   if (project) payload.project_code = project;
@@ -46,25 +66,31 @@ async function ask() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
+
     const data = await res.json();
+
     if (!res.ok) {
-      appendMessage(
-        "assistant",
-        `Error: ${data.detail || "LLM call failed"}`
+      createBubble(
+        "bot",
+        `Error: ${data.detail || "Chatbot API call failed. Check backend logs."}`
       );
     } else {
-      appendMessage("assistant", data.answer || "(no answer)", {
-        reminders_triggered: data.reminders_triggered || 0,
-      });
+      createBubble("bot", data.answer || "(no answer)");
+      if (data.sql) {
+        debugSql.textContent = `SQL: ${data.sql}`;
+      }
     }
   } catch (e) {
-    appendMessage("assistant", "Error calling chatbot API.");
+    createBubble("bot", "Error calling chatbot API.");
   } finally {
+    setTyping(false);
+    askBtn.disabled = false;
     chatStatus.textContent = "";
   }
 }
 
 askBtn.addEventListener("click", ask);
+
 cQueryInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
     e.preventDefault();
@@ -78,4 +104,12 @@ presetButtons.forEach((btn) => {
     cQueryInput.value = q;
     cQueryInput.focus();
   });
+});
+
+// Optional: initial welcome message
+window.addEventListener("DOMContentLoaded", () => {
+  createBubble(
+    "bot",
+    "Hi, I’m your CG × Citi portfolio assistant.\n\nYou can ask about:\n• Completed / mismatched timesheets\n• Billing trends by project\n• Leave balance and time off\n• Utilisation and risk signals"
+  );
 });
